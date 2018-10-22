@@ -8,8 +8,9 @@ class Controller extends BaseController
 {
     //
     public $responseData = array(
+        'data' => [],
         'success' => true,
-        'errorCode' => 0,
+        'errorCode' => STATUS_CODE_SUCCESS,
         'message' => 'success'
     );
 

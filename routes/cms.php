@@ -10,7 +10,8 @@ $router->get('/', function () use ($router) {
 });
 
 $router->group(['prefix' => 'v1'],function () use ($router){
-    $router->post('/ui/accounts/login',['uses' => 'v1\ui\AccountController@login']);
-    $router->post('/ui/accounts/register',['uses' => 'v1\ui\AccountController@register']);
-
+    $router->get('/cms/users/getAll',['uses' => 'v1\cms\UserController@getAll']);
+    $router->post('/cms/users/getById',['uses' => 'v1\cms\UserController@getById']);
+    $router->post('/cms/users/create',['uses' => 'v1\cms\UserController@create']);
+    $router->post('/cms/users/update',['uses' => 'v1\cms\UserController@update']);
 });
