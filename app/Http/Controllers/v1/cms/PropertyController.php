@@ -6,14 +6,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Property;
 
-class PropertyController extends Controller{
+class PropertyController extends Controller
+{
 
-    public function create(Request $request){
+    public function create(Request $request)
+    {
 
-        $lang_code = $request->request->get('lang_code');
+        $lang_code = $this->_formatLang($request->request->get('lang_code'));
         $location = $request->request->get('location');
         $loc = $request->request->get('loc');
-        $address = $request->request->get('address');
         $detail = $request->request->get('detail');
         $start_date = $request->request->get('start_date');
         $end_date = $request->request->get('end_date');
@@ -32,5 +33,17 @@ class PropertyController extends Controller{
         Property::create($request->request->all());
         return response()->json($this->responseData);
 
+    }
+
+    private function _formatLang($langCode = null)
+    {
+        if (empty($langCode)){
+            return null;
+        }
+        $data = array();
+        foreach ($langCode as $key => $val) {
+            $data[$key] = $val;
+        }
+        return $data;
     }
 }

@@ -14,4 +14,6 @@ $router->group(['prefix' => 'v1'],function () use ($router){
     $router->post('/cms/users/getById',['uses' => 'v1\cms\UserController@getById']);
     $router->post('/cms/users/create',['uses' => 'v1\cms\UserController@create']);
     $router->post('/cms/users/update',['uses' => 'v1\cms\UserController@update']);
+    //
+    $router->post('/cms/properties/create',['uses' => 'v1\cms\PropertyController@create']);
 });
