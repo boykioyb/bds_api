@@ -115,4 +115,9 @@ class Controller extends BaseController
         }
         return $dataReq;
     }
+    public function create(){}
+    public function update(){}
+    public function search(){}
+    public function getById(){}
+    public function delete(){}
 }
