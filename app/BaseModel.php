@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App;
 
 use Jenssegers\Mongodb\Eloquent\Model as EloquentModel;
 
@@ -12,10 +12,8 @@ class BaseModel extends EloquentModel
 
         static::creating(function ($model) {
             // do stuff
-            $this->formatDataForSchema($model->customSchema,$model->attributes,$model->asciiFields);
+            $model->formatDataForSchema($model->customSchema,$model->attributes,$model->asciiFields);
 
-            var_dump($model->attributes);
-            die;
         });
 
         static::updating(function ($model) {
@@ -44,10 +42,6 @@ class BaseModel extends EloquentModel
                     unset($dataReq[$key]);
                 }
             }
-        }
-        if (!empty($asciiFields)) {
-
-            $this->convertFieldsToAscii($this->asciiFields, $this->data[$this->alias]);
         }
         return $dataReq;
     }

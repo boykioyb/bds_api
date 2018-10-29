@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class UserController
@@ -22,26 +23,26 @@ class UserController extends Controller
      *
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
-    {
-        "data": {
-            "content": [
-                {
-                    "_id": "5bcb4546bb2c8e00075e8e32",
-                    "email": "boykioyb96@gmail.com",
-                    "status": 1,
-                    "group_id": "1",
-                    "updated_at": "2018-10-20 15:09:58",
-                    "created_at": "2018-10-20 15:09:58"
-                }
-            ],
-            "limit": 10,
-            "page": 1,
-            "total": 1
-        },
-        "success": true,
-        "errorCode": 0,
-        "message": "success"
-    }
+     * {
+     * "data": {
+     * "content": [
+     * {
+     * "_id": "5bcb4546bb2c8e00075e8e32",
+     * "email": "boykioyb96@gmail.com",
+     * "status": 1,
+     * "group_id": "1",
+     * "updated_at": "2018-10-20 15:09:58",
+     * "created_at": "2018-10-20 15:09:58"
+     * }
+     * ],
+     * "limit": 10,
+     * "page": 1,
+     * "total": 1
+     * },
+     * "success": true,
+     * "errorCode": 0,
+     * "message": "success"
+     * }
      * @apiError UserEmpty data empty.
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -75,19 +76,19 @@ class UserController extends Controller
      *
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
-    {
-             "success": true,
-             "errorCode": 0,
-             "message": "success",
-             "data": {
-                "_id": "5bcb4546bb2c8e00075e8e32",
-                "email": "boykioyb96@gmail.com",
-                "status": 1,
-                "group_id": "1",
-                "updated_at": "2018-10-20 15:09:58",
-                "created_at": "2018-10-20 15:09:58"
-             }
-     }
+     * {
+     * "success": true,
+     * "errorCode": 0,
+     * "message": "success",
+     * "data": {
+     * "_id": "5bcb4546bb2c8e00075e8e32",
+     * "email": "boykioyb96@gmail.com",
+     * "status": 1,
+     * "group_id": "1",
+     * "updated_at": "2018-10-20 15:09:58",
+     * "created_at": "2018-10-20 15:09:58"
+     * }
+     * }
      * @apiError UserEmpty data empty.
      * @return \Illuminate\Http\JsonResponse
      *
@@ -115,48 +116,49 @@ class UserController extends Controller
      *
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
-    {
-        "data": {
-            "content": [
-                    {
-                        "_id": "5bcb4546bb2c8e00075e8e32",
-                        "email": "boykioyb96@gmail.com",
-                        "status": 1,
-                        "group_id": "1",
-                        "updated_at": "2018-10-20 15:09:58",
-                        "created_at": "2018-10-20 15:09:58"
-                    }
-            ],
-            "limit": 10,
-            "page": 1,
-            "total": 1
-        },
-        "success": true,
-        "errorCode": 0,
-        "message": "success"
-    }
+     * {
+     * "data": {
+     * "content": [
+     * {
+     * "_id": "5bcb4546bb2c8e00075e8e32",
+     * "email": "boykioyb96@gmail.com",
+     * "status": 1,
+     * "group_id": "1",
+     * "updated_at": "2018-10-20 15:09:58",
+     * "created_at": "2018-10-20 15:09:58"
+     * }
+     * ],
+     * "limit": 10,
+     * "page": 1,
+     * "total": 1
+     * },
+     * "success": true,
+     * "errorCode": 0,
+     * "message": "success"
+     * }
      * @apiError UserEmpty data empty.
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      *
      */
-    public function search(Request $request){
+    public function search(Request $request)
+    {
         $user = User::query();
-        if(!empty($request->request->get('username'))){
+        if (!empty($request->request->get('username'))) {
             $username = $request->request->get('username');
-            $user->where('username',$username);
+            $user->where('username', $username);
         }
-        if(!empty($request->request->get('email'))){
+        if (!empty($request->request->get('email'))) {
             $email = $request->request->get('email');
-            $user->where('username',$email);
+            $user->where('username', $email);
         }
-        if(!empty($request->request->get('status'))){
+        if (!empty($request->request->get('status'))) {
             $status = $request->request->get('status');
-            $user->where('status',$status);
+            $user->where('status', $status);
         }
-        if (!empty($request->request->get('group_id'))){
+        if (!empty($request->request->get('group_id'))) {
             $group_id = new \MongoId($request->request->get('group_id'));
-            $user->where('group_id',$group_id);
+            $user->where('group_id', $group_id);
         }
 
 
@@ -209,22 +211,66 @@ class UserController extends Controller
      */
     public function create(Request $request)
     {
-        $this->validate($request, [
-            'username' => 'required|unique:users',
-            'password' => 'required',
+        $validator = Validator::make($request->all(), [
+            'username' => 'required|unique:users|max:255',
+            'password' => 'required|min:6',
             'email' => 'required|email',
-            'status' => 'required'
+            'mobile' => 'numeric',
+            'status' => 'numeric'
+        ], [
+            'username.required' => 'Please enter a username',
+            'username.unique' => 'username does exist',
+            'password.required' => 'Please enter a password',
+            'password.min' => 'Passwords must be greater than 6 characters',
+            'email.required' => 'Please enter a email',
+            'email.email' => 'Please enter an email',
+            'mobile.numeric' => 'Please enter a numeric',
+            'status.numeric' => 'Please enter a numeric',
         ]);
-        $formatData = $this->formatDataInput($request->request->all());
+        if ($validator->fails()){
+            $this->responseData['data']['content'] = $validator->errors();
+            $this->responseData['success'] = false;
+            $this->responseData['errorCode'] = 400;
+            $this->responseData['message'] = "validator fails";
+            return response()->json($this->responseData);
+        }
         $data = array();
-        $data['username'] = $formatData['username'];
-        $data['password'] = Hash::make($formatData['password']);
-        $data['email'] = $formatData['email'];
-        $data['status'] = (int)$formatData['status'];
-        $data['group_id'] = $formatData['group_id'];
+
+        $username = $this->formatDataInput($request->request->get('username'));
+        if (!empty($username)) {
+            $data['username'] = $username;
+        }
+        $fullName = $this->formatDataInput($request->request->get('full_name'));
+        if (!empty($fullName)) {
+            $data['full_name'] = $fullName;
+        }
+
+        $password = $this->formatDataInput($request->request->get('password'));
+        if (!empty($password)) {
+            $data['password'] = Hash::make($username . $password);
+        }
+
+        $email = $this->formatDataInput($request->request->get('email'));
+        if (!empty($email)) {
+            $data['email'] = $email;
+        }
+
+        $mobile = $this->formatDataInput($request->request->get('mobile'));
+        if (!empty($mobile)) {
+            $data['mobile'] = $mobile;
+        }
+
+        $status = $this->formatDataInput($request->request->get('status'));
+        $status = !empty($status) ? (int)$status : 0;
+        $data['status'] = $status;
+
+        $group_id = $this->formatDataInput($request->request->get('group_id'));
+        if (!empty($group_id)) {
+            $data['group_id'] = $group_id;
+        }
 
         $res = User::create($data);
-        $this->responseData['data'] = $res;
+        $this->responseData['data'] = json_encode($res);
         return response()->json($this->responseData);
     }
 
@@ -277,23 +323,23 @@ class UserController extends Controller
             $this->responseData['message'] = "Id not exists.";
             return response()->json($this->responseData);
         }
-        $user  = User::find($id);
-        if(empty($user)){
+        $user = User::find($id);
+        if (empty($user)) {
             $this->responseData['message'] = "data empty.";
             return response()->json($this->responseData);
         }
 
-        if (!empty($request->request->get('email'))){
+        if (!empty($request->request->get('email'))) {
             $email = trim(htmlentities(strip_tags($request->request->get('email'))));
             $user->email = $email;
         }
 
-        if (!empty($request->request->get('status'))){
+        if (!empty($request->request->get('status'))) {
             $status = (int)trim(htmlentities(strip_tags($request->request->get('status'))));
             $user->status = $status;
         }
 
-        if (!empty($request->request->get('group_id'))){
+        if (!empty($request->request->get('group_id'))) {
             $group_id = trim(htmlentities(strip_tags($request->request->get('group_id'))));
             $user->group_id = new \MongoId($group_id);
         }
@@ -334,7 +380,8 @@ class UserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function resetPassword(Request $request){
+    public function resetPassword(Request $request)
+    {
         $this->validate($request, [
             'id' => 'required',
             'password' => 'bail|required|min:6',
@@ -346,8 +393,8 @@ class UserController extends Controller
             $this->responseData['message'] = "Id not exists.";
             return response()->json($this->responseData);
         }
-        $user  = User::find($id);
-        if(empty($user)){
+        $user = User::find($id);
+        if (empty($user)) {
             $this->responseData['message'] = "data empty.";
             return response()->json($this->responseData);
         }
